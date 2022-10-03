@@ -1,4 +1,5 @@
 #include "DxLib.h"
+#include "Game.h"
 #include "shot.h"
 
 namespace
@@ -37,6 +38,11 @@ void Shot::update()
 {
 	if (!m_isExist)return ;
 	m_pos += m_vec;
+
+	if (m_pos.x > Game::kScreenWidth)
+	{
+		m_isExist = false;
+	}
 }
 // •\Ž¦
 void Shot::draw()
