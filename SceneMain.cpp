@@ -11,7 +11,6 @@ SceneMain::SceneMain()
 {
 	m_hPlayerGraphic = -1;
 	m_hShotGraphic = -1;
-	m_shotInterval = 0;;
 }
 SceneMain::~SceneMain()
 {
@@ -26,12 +25,13 @@ void SceneMain::init()
 
 	m_player.setHandle(m_hPlayerGraphic);
 	m_player.init();
+	m_player.setMain(this);
+
 
 	for (auto& shot : m_shot)
 	{
 		shot.setHandle(m_hShotGraphic);
 	}
-	m_shotInterval = 0;
 }
 
 // èIóπèàóù
@@ -48,22 +48,6 @@ void SceneMain::update()
 	for (auto& shot : m_shot)
 	{
 		shot.update();
-	}
-	m_shotInterval--;
-	if (m_shotInterval < 0)m_shotInterval = 0;
-
-	// ÉLÅ[ì¸óÕèàóù
-	int padState = GetJoypadInputState(DX_INPUT_KEY_PAD1);
-	if ((padState & PAD_INPUT_1)&&(m_shotInterval <= 0))
-	{
-		for (auto& shot : m_shot)
-		{
-			if (shot.isExsist()) continue;
-			
-			shot.start(m_player.getPos());
-			m_shotInterval = kShotInterval;
-			break;
-		}
 	}
 }
 
@@ -84,4 +68,16 @@ void SceneMain::draw()
 		if (shot.isExsist()) shotNum++;
 	}
 	DrawFormatString(0, 0, GetColor(0, 255, 255), "íeÇÃêî%d", shotNum);
+}
+
+bool SceneMain::createShot(Vec2 pos)
+{
+	for (auto& shot : m_shot)
+	{
+		if (shot.isExsist()) continue;
+
+		shot.start(pos);
+		return true;
+	}
+	return false;
 }

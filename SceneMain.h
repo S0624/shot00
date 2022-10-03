@@ -19,6 +19,9 @@ public:
 	// 毎フレームの描画
 	void draw();
 	
+	//弾の生成
+	bool createShot(Vec2 pos);
+
 private:
 	// ショットの最大数
 	static constexpr int kShotMax = 64;
@@ -32,6 +35,4 @@ private:
 	Player m_player;
 	// ショット
 	Shot m_shot[kShotMax];
-	//ショットの発射感覚
-	int m_shotInterval;
 };
