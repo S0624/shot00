@@ -32,4 +32,6 @@ private:
 	Player m_player;
 	// ショット
 	Shot m_shot[kShotMax];
+	//ショットの発射感覚
+	int m_shotInterval;
 };
