@@ -1,6 +1,10 @@
 #include "DxLib.h"
 #include "SceneMain.h"
-
+#include "player.h"
+#include "ShotNormal.h"
+//#include "ShotSinCurve.h"
+//#include "ShotCurve.h"
+#include "ShotBound.h"
 namespace
 {
 	//ƒVƒ‡ƒbƒg‚Ì”­ËŠÔŠu
@@ -28,13 +32,9 @@ void SceneMain::init()
 	m_player.setMain(this);
 
 
-	for (auto& shot : m_pShotNormal)
+	for (auto& pShot : m_pShot)
 	{
-		shot = nullptr;
-	}
-	for (auto& shot : m_pShotBound)
-	{
-		shot = nullptr;
+		pShot = nullptr;
 	}
 }
 
@@ -44,17 +44,11 @@ void SceneMain::end()
 	DeleteGraph(m_hPlayerGraphic);
 	DeleteGraph(m_hShotGraphic);
 	
-	for (auto& shot : m_pShotNormal)
+	for (auto& pShot : m_pShot)
 	{
-		if (!shot) continue;
-		delete shot;
-		shot = nullptr;
-	}
-	for (auto& shot : m_pShotBound)
-	{
-		if (!shot) continue;
-		delete shot;
-		shot = nullptr;
+		if (!pShot) continue;
+		delete pShot;
+		pShot = nullptr;
 	}
 }
 
@@ -62,24 +56,14 @@ void SceneMain::end()
 void SceneMain::update()
 {
 	m_player.update();
-	for (auto& shot : m_pShotNormal)
+	for (auto& pShot : m_pShot)
 	{
-		if (!shot) continue;
-		shot->update();
-		if (!shot->isExsist())
+		if (!pShot) continue;
+		pShot->update();
+		if (!pShot->isExsist())
 		{
-			delete shot;
-			shot = nullptr;
-		}
-	}
-	for (auto& shot : m_pShotBound)
-	{
-		if (!shot) continue;
-		shot->update();
-		if (!shot->isExsist())
-		{
-			delete shot;
-			shot = nullptr;
+			delete pShot;
+			pShot = nullptr;
 		}
 	}
 }
@@ -89,57 +73,44 @@ void SceneMain::draw()
 {
 	m_player.draw();
 
-	for (auto& shot : m_pShotNormal)
+	for (auto& pShot : m_pShot)
 	{
-		if (!shot) continue;
-		shot->draw();
-	}
-	for (auto& shot : m_pShotBound)
-	{
-		if (!shot) continue;
-		shot->draw();
+		if (!pShot) continue;
+		pShot->draw();
 	}
 
 	//Œ»İ‘¶İ‚µ‚Ä‚¢‚é‹Ê‚Ì”‚ğ•\¦
 	int shotNum = 0;
-	for (auto& shot : m_pShotNormal)
+	for (auto& pShot : m_pShot)
 	{
-		if (!shot) continue;
-		if (shot->isExsist()) shotNum++;
+		if (!pShot) continue;
+		if (pShot->isExsist()) shotNum++;
 	}
-	DrawFormatString(0, 0, GetColor(0, 255, 255), "Norma:%d", shotNum);
-	
-	shotNum = 0;
-	for (auto& shot : m_pShotBound)
-	{
-		if (!shot) continue;
-		if (shot->isExsist()) shotNum++;
-	}
-	DrawFormatString(0, 30, GetColor(0, 255, 255), "Bound:%d", shotNum);
+	DrawFormatString(0, 0, GetColor(0, 255, 255), "’e‚Ì”:%d", shotNum);
 }
 
 bool SceneMain::createShotNormal(Vec2 pos)
 {
-	for (auto& shot : m_pShotNormal)
+	for (auto& pShot : m_pShot)
 	{
-		if (shot) continue;
+		if (pShot) continue;
 
-		shot = new ShotNormal;
-		shot->setHandle(m_hShotGraphic);
-		shot->start(pos);
+		pShot = new ShotNormal;
+		pShot->setHandle(m_hShotGraphic);
+		pShot->start(pos);
 		return true;
 	}
 	return false;
 }
 bool SceneMain::createShotBound(Vec2 pos)
 {
-	for (auto& shot : m_pShotBound)
+	for (auto& pShot : m_pShot)
 	{
-		if (shot) continue;
+		if (pShot) continue;
 
-		shot = new ShotBound;
-		shot->setHandle(m_hShotGraphic);
-		shot->start(pos);
+		pShot = new ShotBound;
+		pShot->setHandle(m_hShotGraphic);
+		pShot->start(pos);
 		return true;
 	}
 	return false;
