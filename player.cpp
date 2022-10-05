@@ -42,13 +42,24 @@ void Player::update()
 	m_shotInterval--;
 	if (m_shotInterval < 0)m_shotInterval = 0;
 
-	if ((padState & PAD_INPUT_1) && (m_shotInterval <= 0))
+	if (m_shotInterval <= 0)
 	{
-		if (m_pMain->createShot(getPos()))
+		if (padState & PAD_INPUT_1)
 		{
-			m_shotInterval = kShotInterval;
+			if (m_pMain->createShotNormal(getPos()))
+			{
+				m_shotInterval = kShotInterval;
+			}
+		}
+		if (padState & PAD_INPUT_2)
+		{
+			if (m_pMain->createShotBound(getPos()))
+			{
+				m_shotInterval = kShotInterval;
+			}
 		}
 	}
+
 
 	if (padState & PAD_INPUT_UP)
 	{
