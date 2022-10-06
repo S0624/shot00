@@ -5,6 +5,8 @@
 //#include "ShotSinCurve.h"
 //#include "ShotCurve.h"
 #include "ShotBound.h"
+#include<cassert>
+
 namespace
 {
 	//ƒVƒ‡ƒbƒg‚Ì”­ŽËŠÔŠu
@@ -45,7 +47,8 @@ void SceneMain::end()
 	
 	for (auto& pShot : m_pShotVt)
 	{
-		if (!pShot) continue;
+		assert(pShot);				//ƒoƒO‚ª‚ ‚Á‚½‚ç‚í‚´‚ÆŽ~‚ß‚éˆ—
+		//if (!pShot) continue;
 		delete pShot;
 		pShot = nullptr;
 	}
@@ -60,12 +63,15 @@ void SceneMain::update()
 	while (it != m_pShotVt.end())
 	{
 		auto& pShot = (*it);
+		
+		//if (!pShot)
+		//{
+		//	it++;
+		//	continue;
+		//}
 
-		if (!pShot)
-		{
-			it++;
-			continue;
-		}
+		assert(pShot);				//‚í‚´‚ÆŽ~‚ß‚éˆ—
+
 		pShot->update();
 		if (!pShot->isExsist())
 		{
