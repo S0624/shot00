@@ -31,11 +31,10 @@ void SceneMain::init()
 	m_player.init();
 	m_player.setMain(this);
 
-
-	for (auto& pShot : m_pShot)
-	{
-		pShot = nullptr;
-	}
+	//for (auto& pShot : m_pShot)
+	//{
+	//	pShot = nullptr;
+	//}
 }
 
 // 終了処理
@@ -44,7 +43,7 @@ void SceneMain::end()
 	DeleteGraph(m_hPlayerGraphic);
 	DeleteGraph(m_hShotGraphic);
 	
-	for (auto& pShot : m_pShot)
+	for (auto& pShot : m_pShotVt)
 	{
 		if (!pShot) continue;
 		delete pShot;
@@ -56,15 +55,28 @@ void SceneMain::end()
 void SceneMain::update()
 {
 	m_player.update();
-	for (auto& pShot : m_pShot)
+
+	std::vector<ShotBase*>::iterator it = m_pShotVt.begin();
+	while (it != m_pShotVt.end())
 	{
-		if (!pShot) continue;
+		auto& pShot = (*it);
+
+		if (!pShot)
+		{
+			it++;
+			continue;
+		}
 		pShot->update();
 		if (!pShot->isExsist())
 		{
 			delete pShot;
 			pShot = nullptr;
+
+			//vectorの要素削除
+			it = m_pShotVt.erase(it);		//指定した場所を削除する
+			continue;					//削除したときループの先頭に戻る
 		}
+		it++;
 	}
 }
 
@@ -73,46 +85,31 @@ void SceneMain::draw()
 {
 	m_player.draw();
 
-	for (auto& pShot : m_pShot)
+	for (auto& pShot : m_pShotVt)
 	{
 		if (!pShot) continue;
 		pShot->draw();
 	}
 
 	//現在存在している玉の数を表示
-	int shotNum = 0;
-	for (auto& pShot : m_pShot)
-	{
-		if (!pShot) continue;
-		if (pShot->isExsist()) shotNum++;
-	}
-	DrawFormatString(0, 0, GetColor(0, 255, 255), "弾の数:%d", shotNum);
+	DrawFormatString(0, 0, GetColor(0, 255, 255), "弾の数:%d", m_pShotVt.size());
 }
 
 bool SceneMain::createShotNormal(Vec2 pos)
 {
-	for (auto& pShot : m_pShot)
-	{
-		if (pShot) continue;
-
-		pShot = new ShotNormal;
-		pShot->setHandle(m_hShotGraphic);
-		pShot->start(pos);
-		return true;
-	}
-	return false;
+	ShotNormal * pShot = new ShotNormal;
+	pShot->setHandle(m_hShotGraphic);
+	pShot->start(pos);
+	m_pShotVt.push_back(pShot);
+	
+	return true;
 }
 bool SceneMain::createShotBound(Vec2 pos)
 {
-	for (auto& pShot : m_pShot)
-	{
-		if (pShot) continue;
-
-		pShot = new ShotBound;
-		pShot->setHandle(m_hShotGraphic);
-		pShot->start(pos);
-		return true;
-	}
-	return false;
-
+	ShotBound * pShot = new ShotBound;
+	pShot->setHandle(m_hShotGraphic);
+	pShot->start(pos);
+	m_pShotVt.push_back(pShot);
+	
+	return true;
 }
